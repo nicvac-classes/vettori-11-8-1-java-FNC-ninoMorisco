@@ -1,118 +1,125 @@
 //LEGGERE LE ISTRUZIONI NEL FILE README.md
 
 //Import di Classi Java necessarie al funzionamento del programma
-import java.util.*;
-import java.lang.Math;
+import java.util.Scanner;
+import java.util.Random;
 
-public class Program {
-    private static Random random = new Random();
-    private static Scanner input = new Scanner(System.in);
+// Classe principale, con metodo main
+class Esercizio {
+    // Il programma parte con una chiamata a main().
 
-    public static void main(String[] args) {
-        int n, i, ora, j, iMax, nPesci, peso;
-
-        System.out.println("Inserire il numero di pesci che saranno pescati: ");
-        do {
-            n = input.nextInt();
-        } while (n < 1);
-        int[] pesi = new int[n];
-        int[] ore = new int[n];
-
-        nPesci = 0;
-        for (i = 0; i <= n - 1; i++) {
-            peso = random.nextInt(9) * 50 + 100;
-            System.out.println("Inserisci l'ora di cattura: ");
-            do {
-                ora = (i + 10) % 24;
-            } while (ora < 0 && ora > 24);
-            System.out.println("Pesce di peso: " + peso + "g");
-            System.out.println("Pescato all'ora: " + ora);
-            nPesci = inserisciVettori(pesi, ore, nPesci, peso, ora, nPesci);
-            j = 0;
-            while (j < nPesci) {
-                if (pesi[j] < pesi[nPesci - 1]) {
-                    System.out.println("Il pesce che pesa " + pesi[j] + " grammi, che è stato catturato all'ora " + ore[j] + ", viene rilasciato");
-                    nPesci = eliminaVettori(pesi, ore, nPesci, j);
-                } else {
-                    j = j + 1;
-                }
-            }
-            visualizzaVettori(pesi, ore, nPesci);
-        }
-        iMax = ricercaMassimo(pesi, nPesci);
-        System.out.println("Il pesce più pesante è quello che pesa " + pesi[iMax] + " grammi e che è stato catturato all'ora " + ore[iMax]);
-        nPesci = rimuoviDuplicati(pesi, ore, nPesci);
-        visualizzaVettori(pesi, ore, nPesci);
-    }
-    
-    public static int eliminaVettori(int[] pesi, int[] ore, int nPesci, int posizione) {
-        int i;
-
-        for (i = nPesci; i <= posizione - 2; i++) {
-            pesi[i] = pesi[i + 1];
-            ore[i] = ore[i + 1];
-        }
-        nPesci = nPesci - 1;
-        
-        return nPesci;
-    }
-    
-    public static int inserisciVettori(int[] pesi, int[] ore, int nPesci, int elementoPeso, int elementoOra, int posizione) {
-        int i;
-
-        for (i = nPesci; i >= posizione + 1; i--) {
-            pesi[i] = pesi[i - 1];
-            ore[i] = ore[i - 1];
-        }
-        pesi[posizione] = elementoPeso;
-        ore[posizione] = elementoOra;
-        nPesci = nPesci + 1;
-        
-        return nPesci;
-    }
-    
-    public static int ricercaMassimo(int[] pesi, int nPesci) {
-        int iMax, i;
-
-        iMax = 0;
-        for (i = 0; i <= nPesci - 1; i++) {
-            if (pesi[i] > pesi[iMax]) {
-                iMax = i;
-            }
-        }
-        
-        return iMax;
-    }
-    
-    public static int rimuoviDuplicati(int[] pesi, int[] ore, int nPesci) {
+    static int rimuoviDuplicati(int[] V, int N, int[] O){
         int i, j;
+        int M;
 
-        for (i = 0; i <= nPesci - 2; i++) {
+        M = N;
+        i = 0;
+
+        while(i <= N-2){
             j = i + 1;
-            while (j <= nPesci - 1) {
-                if (pesi[i] == pesi[j]) {
-                    nPesci = eliminaVettori(pesi, ore, nPesci, j);
-                } else {
-                    j = j + 1;
+            while(j <= N-1){
+                if(V[i] == V[j]){
+                    System.out.println("Elimino " + V[j] + " da cella" + j);
+                    
+                    N = eliminaDaVettore(V, N, j);
+                    M = eliminaDaVettore(O, M, j);
+
+                }else{
+                    j++;
                 }
             }
+            i++;
         }
-        
-        return nPesci;
+        return N;
     }
-    
-    public static void visualizzaVettori(int[] pesi, int[] ore, int nPesci) {
-        int i;
 
-        for (i = 0; i <= nPesci - 1; i++) {
-            System.out.println("------");
-            System.out.println("Pesce n°" + i);
-            System.out.println("Peso: " + pesi[i] + "g");
-            System.out.println("Ora di cattura: " + ore[i]);
-            System.out.println("------");
+    static int inserisciInVettore(int[] V, int N, int e, int ie){
+        int N2;
+        N2 = N + 1;
+        for(int i = N; i >= ie+1; i--){
+            V[i] = V[i-1];
         }
+        return N2;
+    }
+
+    static int eliminaDaVettore(int[] V, int N, int ie){
+        int N2;
+        N2 = N - 1;
+        for(int i = ie; i < N - 1; i++){
+            V[i] = V[i+1];
+        }
+        return N2;
+    }
+
+    static void visualizzaVettore(int[] V, int N, int[] O){
+        int i;
+        
+        i = 0;
+        
+        System.out.println("peso: ");
+        while(i < N){
+            System.out.println(i + ": " + V[i]);
+            i++;
+        }
+
+        i = 0;
+
+        System.out.println("ora: ");
+        while(i < N){
+            System.out.println(i + ": " + O[i]);
+            i++;
+        }
+    }
+
+    public static void main(String args[]){
+
+        Scanner in  = new Scanner(System.in);
+        Random rand = new Random();
+        
+        int A, N, M, i, j, e, ora;
+        
+        System.out.print("Insersci il numero di pesci che saranno pescati: ");
+        A = in.nextInt();
+
+        int[] V = new int[A];
+        int[] O = new int[A];
+
+        N = 0;
+        M = 0;
+        i = 1;
+        ora = 9;
+
+        while(i <= A){
+            e = (2 + rand.nextInt(9)) * 50;
+            ora = (ora + 1) % 50;
+            
+            System.out.println("Il pesce pescato pesa: " + e);
+            
+            N = inserisciInVettore(V,N,e,N); 
+            M = inserisciInVettore(O, M, e, M);
+
+            j = 0;
+            while(j < N){
+                if(V[j] < V[N-1]){
+                    System.out.println(V[j] + " scappa via");
+                    N = eliminaDaVettore(V, N, j);
+                    M = eliminaDaVettore(O, M, j);
+                }else{
+                    j++;
+                }
+            }
+
+            System.out.println("Lago: ");
+            visualizzaVettore(V, N, O);
+            
+            i++; 
+        }
+
+        N = rimuoviDuplicati(V, N, O);
+
+        System.out.println("Animali con dimensioni diverse rimaste al lago: ");
+        visualizzaVettore(V,N,O);
     }
 }
-
 
 //LEGGERE LE ISTRUZIONI NEL FILE README.md
